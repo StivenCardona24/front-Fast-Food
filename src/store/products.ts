@@ -1,65 +1,75 @@
-import {defineStore} from 'pinia';
-import { ref } from 'vue';
-
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import Swal from "sweetalert2";
 import axios from "axios";
 
 export const useProductStore = defineStore("Products", () => {
-    const productos = ref();
-    const hb = ref([]);
-    const hd = ref([]);
-    const other = ref([]);
+  const productos = ref([]);
+  const hb = ref([]);
+  const hd = ref([]);
+  const other = ref([]);
 
-    const url = "http://localhost:3309/api/v1/products";
-    const listProd =async () => {
-        
-        await axios
-          .get(url)
-          .then((response) => {
-            const data = response.data.products;
-            productos.value = data;
-            productos.value.map(prod=>{
-            const order_amount = parseInt(localStorage.getItem(`order_amount_${prod.id}`))  || 1; 
-              if( prod.type.id ==1){
-                const buger = {
-                  ...prod,
-                  idModal: `#hb${prod.id}`,
-                  idUser:`hb${prod.id}`,
-                  order_amount:order_amount
-  
-                }
-                hb.value.push(buger)
-              }else if(prod.type.id==3){
-                const hotdog = {
-                  ...prod,
-                  idModal: `#hd${prod.id}`,
-                  idUser:`hd${prod.id}`,
-                  order_amount:order_amount
-                }
-                hd.value.push(hotdog)
-              }
-              else{
-                const o = {
-                    ...prod,
-                    idModal: `#o${prod.id}`,
-                    idUser:`o${prod.id}`,
-                    order_amount:order_amount
-                }
+  const search = ref("");
 
-                other.value.push(o);
-              }
-            })
-  
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-    
-  
-    return {
-        listProd,
-        hd, 
-        hb,
-        other
-    };
-  });
+  const url = "http://localhost:3309/api/v1/products";
+  const listProd = async () => {
+    await axios
+      .get(url)
+      .then((response) => {
+        const data = response.data.products;
+        productos.value = data;
+      
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+      productos.value = productos.value.map((prod) => {
+        const order_amount =
+          parseInt(localStorage.getItem(`order_amount_${prod.id}`)) || 1;
+        return {
+          idModal: `#p${prod.id}`,
+          idUser: `p${prod.id}`,
+          order_amount: order_amount,
+          ...prod,
+        };
+      });
+    console.log(productos.value);
+  };
+
+  const searchProduct = async () => {
+    await listProd();
+    if (!search.value.length) {
+      Swal.fire("Ingrese un valor");
+      listProd();
+    }
+
+    const data = productos.value.filter((product) =>
+      product.name.toLowerCase().includes(search.value.toLowerCase())
+    );
+
+    productos.value = data;
+    console.log(productos.value);
+  };
+
+
+  const filterCategory = async (type:any) => {
+    await listProd();
+    const data = productos.value.filter(product => product.type.id === type);
+
+
+   productos.value = data;
+
+}
+ 
+
+  return {
+    listProd,
+    hd,
+    hb,
+    other,
+    productos,
+    search,
+    searchProduct,
+    filterCategory
+  };
+});

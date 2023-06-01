@@ -3,7 +3,7 @@
         <nav id="navbar" class="navbar navbar-expand-lg bg-dark navbar-dark">
             <div class="container">
                 <a class="navbar-brand" href="/">
-                    <img src="../assets/images/l1.png" alt="logo">
+                    <img src="../assets/images/l1.png" alt="logo" class="logo">
                     <span>Hot Durger's</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -13,14 +13,21 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Buscar Producto"
+                                    aria-label="Buscar Producto" aria-describedby="button-addon2" v-model="search">
+                                <button class="btn btn-outline-secondary" type="button" id="button-addon2" @click="searchProduct()"><img src="../../public/buscar.png" style="width: 25px;" /></button>
+                            </div>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="/">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#hamburguers">Hamburguesas</a>
+                            <a class="nav-link active" aria-current="page" @click="filterCategory(1)">Hamburguesas</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#hotdogs">Perros Calientes</a>
+                            <a class="nav-link active" aria-current="page" @click="filterCategory(3)">Perros Calientes</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="#" data-bs-toggle="modal"
@@ -239,7 +246,8 @@
                         <h5 class="text-center"><strong>Seleccione su cargo</strong></h5>
                         <div class="row">
                             <div class="col-md-4 col-lg-4 mt-3 mb-4">
-                                <div class="card" data-bs-toggle="modal" data-bs-target="#chef-table" @click="filterOrder('Pagado')">
+                                <div class="card" data-bs-toggle="modal" data-bs-target="#chef-table"
+                                    @click="filterOrder('Pagado')">
                                     <img src="../assets/images/chef.jpg" class="card-img-top" alt="hb4">
                                     <div class="card-body">
                                         <h5 class="card-title text-center">CHEF</h5>
@@ -247,7 +255,8 @@
                                 </div>
                             </div>
                             <div class="col-md-4 col-lg-4 mt-3 mb-4">
-                                <div class="card" data-bs-toggle="modal" data-bs-target="#waiter-table" @click="filterOrder('Preparado')">
+                                <div class="card" data-bs-toggle="modal" data-bs-target="#waiter-table"
+                                    @click="filterOrder('Preparado')">
                                     <img src="../assets/images/mesero.jpg" class="card-img-top" alt="hb4">
                                     <div class="card-body">
                                         <h5 class="card-title text-center">MESERO</h5>
@@ -317,11 +326,11 @@
                                                 </tbody>
                                             </table>
                                         </td>
-                                        <td class="pt-5" v-if="item.status === 'Pagado'"><span
-                                                v-text="item.status" class="text-success"></span></td>
+                                        <td class="pt-5" v-if="item.status === 'Pagado'"><span v-text="item.status"
+                                                class="text-success"></span></td>
                                         <td class="pt-5" v-else><span><strong v-text="item.status"
                                                     class="text-danger"></strong></span></td>
-                                        <td class="pt-5"><button @click="chefbtn(item.id-1)" class="btn btn-success">OK <i
+                                        <td class="pt-5"><button @click="chefbtn(item.id - 1)" class="btn btn-success">OK <i
                                                     class="fas fa-check"></i></button></td>
 
                                     </tr>
@@ -379,11 +388,11 @@
                                                 </tbody>
                                             </table>
                                         </td>
-                                        <td class="pt-5" v-if="item.status === 'Entregado'"><span
-                                                v-text="item.status" class="text-success"></span></td>
+                                        <td class="pt-5" v-if="item.status === 'Entregado'"><span v-text="item.status"
+                                                class="text-success"></span></td>
                                         <td class="pt-5" v-else><span><strong v-text="item.statusWaiter"
                                                     class="text-danger"></strong></span></td>
-                                        <td class="pt-5"><button @click="waiterbtn(item.id-1)" class="btn btn-success">OK <i
+                                        <td class="pt-5"><button @click="waiterbtn(item.id - 1)" class="btn btn-success">OK <i
                                                     class="fas fa-check"></i></button></td>
 
                                     </tr>
@@ -442,11 +451,10 @@
                                         </td>
                                         <td v-text="item.totalp"></td>
                                         <td v-text="item.totalc"></td>
-                                        <td  v-if="item.status === 'cancelado'"><span><strong v-text="item.status"
+                                        <td v-if="item.status === 'cancelado'"><span><strong v-text="item.status"
                                                     class="text-danger"></strong></span></td>
-                                        <td><span v-text="item.status"
-                                                class="text-success"></span></td>
-                                        
+                                        <td><span v-text="item.status" class="text-success"></span></td>
+
                                     </tr>
                                     <tr>
                                         <td colspan="1">Totales:</td>
@@ -495,11 +503,15 @@ import { defineComponent } from 'vue';
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 import { useMarketStore } from '@/store/market';
-
+import { useProductStore } from '@/store/products'
 
 const MarketStore = useMarketStore();
 const { cart, ptrigger, totalCart, paymethod, modaltrigger, userinput, passinput, logspan, order, totalsales, nonsold, npurchased, totalcancelled } = storeToRefs(MarketStore)
 const { delFromCart, payments, cancel, cancelpurchase, cartClick, login, closelogin, logout, chefbtn, waiterbtn, selectPayment, validatePayment } = MarketStore;
+
+const ProductStore = useProductStore();
+const { search } = storeToRefs(ProductStore);
+const { searchProduct, filterCategory } = ProductStore
 
 const pay = ref({
     name: "",

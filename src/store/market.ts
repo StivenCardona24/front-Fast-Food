@@ -20,6 +20,7 @@ const employees = ref([
     {id: '5678', charge: 'Mesero', password: '87654321'},
     {id: '3333', charge: 'Admin', password: '3333'},
 ]);
+
 const modaltrigger = ref(0);
 const logspan = ref(0);
 
@@ -29,7 +30,7 @@ const cards = ref([
         number: "12345678",
         date: "2028-05-10",
         cvv: "562",
-        balance: 100000
+        balance: 10000
 
     },
     {
@@ -47,12 +48,12 @@ const wallets = ref([
     {
         name: "pepe",
         number: "3103333333",
-        balance: 80000
+        balance: 800000
     },
     {
         name: "juanit",
         number: "3101111111",
-        balance: 10000
+        balance: 100000
     },
 
 
